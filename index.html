@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños!</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #ff69b4, #ff1493, #8a2be2, #4169e1);
+            background-size: 400% 400%;
+            animation: gradientMove 10s ease infinite;
+            overflow: hidden;
+            position: relative;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .welcome-screen.hidden {
+            display: none;
+        }
+
+        .play-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 20, 147, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(255, 20, 147, 0.6);
+        }
+
+        .play-button:active {
+            transform: scale(0.95);
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .play-button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .welcome-text {
+            color: white;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        h1 {
+            font-size: 4.5em;
+            color: white;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.5),
+                0 0 20px rgba(255, 105, 180, 0.5),
+                0 0 30px rgba(255, 20, 147, 0.5);
+            animation: pulse 2s infinite, rainbow 3s infinite;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: white;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1s forwards;
+        }
+
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .audio-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .audio-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .roses {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .rose {
+            position: absolute;
+            font-size: 2.5em;
+            animation: float 8s infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.3));
+        }
+
+        .star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+            box-shadow: 0 0 10px white;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff69b4;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 1.5em;
+            color: #ff69b4;
+            animation: heartBeat 2s infinite, float 6s infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(90deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            75% { transform: translateY(-10px) rotate(270deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+            100% { opacity: 0; transform: scale(1); }
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Efectos especiales para móviles */
+        @media (max-width: 768px) {
+            h1 { font-size: 3em; }
+            .welcome-text { font-size: 1.5em; }
+            .play-button { width: 100px; height: 100px; font-size: 2.5em; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de bienvenida -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-text">🎉 ¡Presiona para comenzar la celebración! 🎉</div>
+        <button class="play-button" id="playButton">
+            ▶️
+        </button>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <h1 id="mainTitle">¡Feliz Cumpleaños!</h1>
+        <div class="subtitle" id="subtitle">🎂 Que tengas un día maravilloso 🎂</div>
+    </div>
+
+    <!-- Elementos decorativos -->
+    <div class="roses" id="roses"></div>
+
+    <!-- Controles de audio -->
+    <div class="audio-controls" id="audioControls" style="display: none;">
+        <button class="audio-btn" id="playPauseBtn">⏸️</button>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+        <button class="audio-btn" id="muteBtn">🔊</button>
+    </div>
+
+    <!-- Audio element -->
+    <audio id="birthdayAudio" loop>
+        <source src="birthday-song.mp3" type="audio/mpeg">
+        <source src="birthday-song.ogg" type="audio/ogg">
+        <!-- Fallback para YouTube si no tienes archivo local -->
+        Tu navegador no soporta audio HTML5.
+    </audio>
+
+    <script>
+        // Variables globales
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const playButton = document.getElementById('playButton');
+        const audio = document.getElementById('birthdayAudio');
+        const audioControls = document.getElementById('audioControls');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const muteBtn = document.getElementById('muteBtn');
+        const mainTitle = document.getElementById('mainTitle');
+        
+        let isPlaying = false;
+        let isMuted = false;
+
+        // Inicializar la página
+        function init() {
+            createRoses();
+            createStars();
+            createHearts();
+            setupEventListeners();
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            playButton.addEventListener('click', startCelebration);
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            volumeSlider.addEventListener('input', changeVolume);
+            muteBtn.addEventListener('click', toggleMute);
+        }
+
+        // Iniciar la celebración
+        function startCelebration() {
+            welcomeScreen.classList.add('hidden');
+            audioControls.style.display = 'flex';
+            
+            // Reproducir audio
+            audio.volume = volumeSlider.value / 100;
+            audio.play().then(() => {
+                isPlaying = true;
+                playPauseBtn.textContent = '⏸️';
+                startConfetti();
+                updateTitle();
+            }).catch(e => {
+                console.log('Error al reproducir audio:', e);
+                // Si no se puede reproducir el audio, mostrar mensaje
+                alert('Para una mejor experiencia, descarga una canción de cumpleaños como "birthday-song.mp3" en la misma carpeta.');
+            });
+        }
+
+        // Alternar reproducción
+        function togglePlayPause() {
+            if (isPlaying) {
+                audio.pause();
+                playPauseBtn.textContent = '▶️';
+                isPlaying = false;
+            } else {
+                audio.play();
+                playPauseBtn.textContent = '⏸️';
+                isPlaying = true;
+            }
+        }
+
+        // Cambiar volumen
+        function changeVolume() {
+            audio.volume = volumeSlider.value / 100;
+        }
+
+        // Alternar silencio
+        function toggleMute() {
+            if (isMuted) {
+                audio.muted = false;
+                muteBtn.textContent = '🔊';
+                isMuted = false;
+            } else {
+                audio.muted = true;
+                muteBtn.textContent = '🔇';
+                isMuted = true;
+            }
+        }
+
+        // Crear rosas
+        function createRoses() {
+            const roses = document.getElementById('roses');
+            const roseEmojis = ['🌹', '🌺', '🌸', '🌷', '🌻'];
+            
+            for (let i = 0; i < 25; i++) {
+                const rose = document.createElement('div');
+                rose.className = 'rose';
+                rose.innerHTML = roseEmojis[Math.floor(Math.random() * roseEmojis.length)];
+                rose.style.left = Math.random() * 100 + 'vw';
+                rose.style.top = Math.random() * 100 + 'vh';
+                rose.style.animationDelay = Math.random() * 8 + 's';
+                rose.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                roses.appendChild(rose);
+            }
+        }
+
+        // Crear estrellas
+        function createStars() {
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+                document.body.appendChild(star);
+            }
+        }
+
+        // Crear corazones
+        function createHearts() {
+            const heartEmojis = ['💖', '💕', '💗', '💝', '💘'];
+            
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                heart.style.animationDelay = Math.random() * 6 + 's';
+                document.body.appendChild(heart);
+            }
+        }
+
+        // Crear confetti
+        function startConfetti() {
+            const colors = ['#ff69b4', '#ff1493', '#8a2be2', '#4169e1', '#32cd32', '#ffd700'];
+            
+            setInterval(() => {
+                for (let i = 0; i < 5; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    // Eliminar confetti después de la animación
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 4000);
+                }
+            }, 300);
+        }
+
+        // Actualizar título dinámicamente
+        function updateTitle() {
+            const messages = [
+                '🎉 ¡Feliz Cumpleaños! 🎉',
+                '🎂 ¡Que cumplas muchos más! 🎂',
+                '🎊 ¡Eres especial! 🎊',
+                '🌟 ¡Brilla siempre! 🌟',
+                '💖 ¡Eres increíble! 💖'
+            ];
+            
+            let messageIndex = 0;
+            setInterval(() => {
+                mainTitle.textContent = messages[messageIndex];
+                messageIndex = (messageIndex + 1) % messages.length;
+            }, 4000);
+        }
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
